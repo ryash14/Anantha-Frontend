@@ -4,7 +4,23 @@ The Anantha browser client turns ocean-data responses into conversations, tables
 
 A data assistant needs to make structured results usable after retrieval finishes. This client handles the presentation side: response modes, conversation state, CSV views, voice input and file interactions around the ocean-data backend.
 
-[Quick start](#quick-start) · [How it works](#how-it-works) · [Development](#development) · [Contributing](CONTRIBUTING.md)
+[Preview](#application-preview) · [Quick start](#quick-start) · [Architecture](#architecture-and-request-flow) · [Development](#development) · [Contributing](CONTRIBUTING.md)
+
+## Application preview
+
+![Anantha conversation and visualization client](docs/screenshots/ocean-data-client.png)
+
+Archived client view showing the response-mode controls, session list and question composer.
+
+[Screenshot notes](docs/screenshots/README.md)
+
+## Capabilities
+
+| Workflow | Result |
+|---|---|
+| Compose a request | Choose a response mode, language and input method. |
+| Inspect results | Read text responses or explore returned CSV data and plots. |
+| Continue a session | Keep the interaction visible through the conversation interface. |
 
 ## Quick start
 
@@ -23,14 +39,14 @@ npm run dev
 
 Configure the backend endpoint in `src/utils/api.ts` and run a compatible Anantha backend. The main page includes direct provider access; private credentials must move behind a server boundary before public deployment. Browser voice support depends on platform capabilities. This repository is the client, not the retrieval backend.
 
-## How it works
+## Architecture and request flow
 
 1. Enter a question, choose a response mode and optionally provide voice or file input.
 2. The typed API helper posts the request to the configured `/query` endpoint.
 3. Response handlers choose the appropriate text, table or visualization view.
 4. The conversation interface retains the surrounding interaction state.
 
-### Component boundaries
+### Component model
 
 ```mermaid
 flowchart TB
@@ -46,7 +62,7 @@ flowchart TB
     Plot --> Chat
 ```
 
-### Design decisions
+### Engineering decisions
 
 The React application is a separate client deployment. The API helper currently points at a hosted backend URL; changing a local environment variable alone does not replace that literal URL. Direct Gemini file-analysis logic also exists in the main page.
 
