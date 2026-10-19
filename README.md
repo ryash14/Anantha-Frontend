@@ -1,38 +1,16 @@
 # Anantha Frontend
 
-> `An ocean-data conversation client with tables, plots, voice input and document interactions.`
+The Anantha browser client turns ocean-data responses into conversations, tables and visualizations.
 
-### 🏗️ System Architecture
+A data assistant needs to make structured results usable after retrieval finishes. This client handles the presentation side: response modes, conversation state, CSV views, voice input and file interactions around the ocean-data backend.
 
-```mermaid
-%%{init: {'theme': 'dark'}}%%
-flowchart TD
-    N0["Question voice or file input"]
-    N1["React conversation state"]
-    N2["Configured ocean backend API"]
-    N3["Structured response handling"]
-    N4["CSV table and plot rendering"]
-    N5["Chat history and user interaction"]
-    N0 --> N1
-    N1 --> N2
-    N2 --> N3
-    N3 --> N4
-    N4 --> N5
-```
+[Quick start](#quick-start) · [How it works](#how-it-works) · [Development](#development) · [Contributing](CONTRIBUTING.md)
 
-### 🛠️ Production Stack
+## Quick start
 
-React · TypeScript · Vite · Tailwind CSS · shadcn/ui · browser speech APIs · Gemini client integration
+Use Node.js compatible with the Vite dependency. Set the intended backend URL in `src/utils/api.ts`, allow the frontend origin on that backend, and review direct provider access in `src/pages/Index.tsx`.
 
-### ⚡ Key Engineering Capabilities
-
-- Typed response handling connects narrative and data-oriented answers.
-- CSV visualization components expose retrieved datasets.
-- Voice and file workflows complement typed ocean-data queries.
-
-### 🚀 Deployment and Local Setup
-
-Run from the repository root after cloning:
+From a fresh checkout:
 
 ```bash
 git clone https://github.com/ryash14/Anantha-Frontend.git
@@ -45,17 +23,58 @@ npm run dev
 
 Configure the backend endpoint in `src/utils/api.ts` and run a compatible Anantha backend. The main page includes direct provider access; private credentials must move behind a server boundary before public deployment. Browser voice support depends on platform capabilities. This repository is the client, not the retrieval backend.
 
-### Verification
+## How it works
+
+1. Enter a question, choose a response mode and optionally provide voice or file input.
+2. The typed API helper posts the request to the configured `/query` endpoint.
+3. Response handlers choose the appropriate text, table or visualization view.
+4. The conversation interface retains the surrounding interaction state.
+
+### Component boundaries
+
+```mermaid
+flowchart TB
+    Input["Typed, voice or file input"] --> State["React conversation state"]
+    State --> API["Typed request helper"]
+    API --> Backend["Anantha query API"]
+    Backend --> Parse["Response type handling"]
+    Parse --> Text["Narrative response"]
+    Parse --> Table["CSV table"]
+    Parse --> Plot["Visualization"]
+    Text --> Chat["Conversation interface"]
+    Table --> Chat
+    Plot --> Chat
+```
+
+### Design decisions
+
+The React application is a separate client deployment. The API helper currently points at a hosted backend URL; changing a local environment variable alone does not replace that literal URL. Direct Gemini file-analysis logic also exists in the main page.
+
+Keep backend retrieval and database responsibilities in the Anantha service. Client-side provider calls need a server boundary before private credentials can be protected.
+
+## Implementation
+
+**Stack:** React · TypeScript · Vite · Tailwind CSS · shadcn/ui · browser speech APIs · Gemini client integration.
+
+- [src/utils/api.ts](src/utils/api.ts)
+- [src/pages/Index.tsx](src/pages/Index.tsx)
+- [src/types/index.ts](src/types/index.ts)
+
+## Development
+
+Run the repository checks after completing setup:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-These commands are provided by the source configuration; this documentation update does not claim a fresh end-to-end application run.
+Use the offline checks during development. Run provider-backed integration checks separately with configured credentials and representative inputs.
 
-### Source Map
+## Contributing and support
 
-- [src/utils/api.ts](src/utils/api.ts)
-- [src/pages/Index.tsx](src/pages/Index.tsx)
-- [src/types/index.ts](src/types/index.ts)
+Report reproducible bugs or propose changes through [GitHub Issues](https://github.com/ryash14/Anantha-Frontend/issues). Include the relevant environment and a small example rather than private datasets or credentials. See [contributing](CONTRIBUTING.md), [security reporting](SECURITY.md) and the [code of conduct](CODE_OF_CONDUCT.md).
+
+## License
+
+No repository-wide license is currently provided. Third-party components, models and datasets retain their own terms.
